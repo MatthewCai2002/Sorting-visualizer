@@ -1,32 +1,33 @@
 /* Global Styling */
-
-body {
-    display: flex;
-    justify-content: center;
+:root {
     background-color: #010101;
+
 }
 
 /* Containers */
 
+.visualizer-container {
+    display: flex;
+    justify-content: center;
+}
+
 .array-container {
     /* Layout */
     display: flex;
+    flex-grow: 1;
+    gap: 0.125rem;
     position: fixed;
-    
     bottom: 0%;
-    top: 50%;
     width: 80%;
-    transform: rotateX(180deg) translate(-50%);
+    transform: rotateX(180deg);
 }
 
 /* Components */
 
 .val-bar {
     /* Layout */
-    flex: 1;
-    margin: 0 0.125rem;
-    min-width: 0.125rem;
-    max-width: 0.625rem;
+    flex-grow: 1;
+    min-width: 2px;
 
     /* Colour */
     background-color: 	#415a77;
