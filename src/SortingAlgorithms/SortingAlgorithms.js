@@ -1,41 +1,28 @@
- export const mergeSort = array => {
-    if (array.length > 1) {
-        // split array in half and make 2 sub arrays
-        let middleIdx = Math.floor(array.length / 2) 
-        let firstHalf = mergeSort(array.slice(0, middleIdx))
-        let secondHalf = mergeSort(array.slice(middleIdx))
-        let sortedArr = []
-        let i = 0, j = 0
-        // merge 2 sub arrays together in sorted order
-        //  done by: if arr1[i] < arr2[j] 
-        //              sortedArr[k] = arr1[i]
-        //              i++
-        //           else
-        //              sortedArr[k] = arr2[i]
-        //              j++
-        //           k++
-        while (i < firstHalf.length && j < secondHalf.length) {
-            if (firstHalf[i] < secondHalf[j]) {
-                sortedArr.push(firstHalf[i])
-                i++
-            } else {
-                sortedArr.push(secondHalf[j])
-                j++
-            }
-        }
-
-        // if one of the arrays is smaller than the other
-        // copy over all contents of larger array
-        while (i < firstHalf.length) {
-            sortedArr.push(firstHalf[i])
-            i++
-        }
-
-        while (j < secondHalf.length) {
-            sortedArr.push(secondHalf[j])
-            j++
-        }
-        return sortedArr
+export async function mergeSort(array, lower, upper) {
+    if (lower < upper) {
+        const mid = (lower + upper) / 2
+        mergeSort(array, 0, mid)
+        mergeSort(array, mid + 1, upper)
+        merge(array, lower, mid, upper)
     }
-    return array
+}
+
+async function merge(array, lower, mid, upper) {
+    let i = lower
+    let j = mid + 1
+    let sortedArray = []
+    while (i <= mid && j <= upper) {
+        if (array[i] < array[j]) {
+            sortedArray.push(array[i++])
+        } else {
+            sortedArray.push(array[j++])
+        }
+    }
+    while (i <= mid) {
+        sortedArray.push(array[i++])
+    }
+
+    while (j <= upper) {
+        sortedArray.push(array[j++])
+    }
 }
