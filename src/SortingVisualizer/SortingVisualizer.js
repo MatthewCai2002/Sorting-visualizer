@@ -27,6 +27,18 @@ function SortingVisualizer() {
     }
 
     // update the colour of bars i and j
+    
+    const updateColourMergeSort = async (sortedArray, i, j) => {
+        setMainArray([...mainArray, sortedArray])
+        let bar1 = document.getElementById(i).style
+        let bar2 = document.getElementById(j).style
+        bar1.backgroundColor = "#ed1c24"
+        bar2.backgroundColor = "#ed1c24"
+        await sleep(animationSpeed)
+        bar1.backgroundColor = "#415a77"
+        bar2.backgroundColor = "#415a77"            
+    }
+
     const updateBarColour = async (sortedArray, i, j) => {
         setMainArray([...sortedArray])
         let bar1 = document.getElementById(i).style
@@ -84,17 +96,17 @@ function SortingVisualizer() {
             } else {
                 sortedArray.push(array[j++])
             }
-            await updateBarColour(sortedArray, i, j)
+            await updateColourMergeSort(sortedArray, i, j)
             
         }
         while (i <= mid) {
             sortedArray.push(array[i++])
-            await updateBarColour(sortedArray, i, j)
+            await updateColourMergeSort(sortedArray, i, j)
         }
         
         while (j <= upper) {
             sortedArray.push(array[j++])
-            await updateBarColour(sortedArray, i, j)
+            await updateColourMergeSort(sortedArray, i, j)
         }
         
         for (let i = lower; i <= upper; i++) {
@@ -132,11 +144,30 @@ function SortingVisualizer() {
 
     // ********** selection sort algorithm **********
     const selSort = async () => {
-        // await sSort(mainArray)
+        await sSort(mainArray)        
         updateSortedBarColour()        
     }
 
-    
+    const sSort = async (array) => {
+        for (let i = 0; i < array.length; i++) {
+            let minIdx = await findMin(array, i, array.length)
+            let min = array[minIdx]
+            let temp = array[i]
+            array[i] = min
+            array[minIdx] = temp
+        }
+    }
+
+    const findMin = async (array, lower, upper) => {
+        let minIdx = lower;
+        for (let i = lower; i < upper; i++) {
+            if (array[i] < array[minIdx]) {
+                minIdx = i
+            }
+            await updateBarColour(array,lower, i)
+        }
+        return minIdx
+    }
 
     // ********** heap sort algorithm **********
     const heapSort = () => {
@@ -167,12 +198,12 @@ function SortingVisualizer() {
     const testSortingAlgos = async (sortingAlgo) => {
         for (let i = 0; i < 100; i++) {
             let tempArray = []
-            for (let i = 0; i < randomIntInInterval(0, 1000); i++) {
+            for (let i = 0; i < randomIntInInterval(1, 1000); i++) {
                 tempArray.push(randomIntInInterval(-1000, 1000))
             }
-            let testArray = tempArray.splice()
+            let testArray = [...tempArray]
             await sortingAlgo(testArray)
-            let jsSortedArray = tempArray.splice().sort((a, b) => a - b)
+            let jsSortedArray = [...tempArray].sort((a, b) => a - b)
             console.log(isArrayEqual(testArray, jsSortedArray))
         }
     }
