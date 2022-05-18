@@ -29,14 +29,20 @@ function SortingVisualizer() {
     // update the colour of bars i and j
     
     const updateColourMergeSort = async (sortedArray, i, j) => {
-        setMainArray([...mainArray, sortedArray])
-        let bar1 = document.getElementById(i).style
-        let bar2 = document.getElementById(j).style
-        bar1.backgroundColor = "#ed1c24"
-        bar2.backgroundColor = "#ed1c24"
-        await sleep(animationSpeed)
-        bar1.backgroundColor = "#415a77"
-        bar2.backgroundColor = "#415a77"            
+        if (document.getElementById(mainArray.length) != null) {
+            let elem = document.getElementById(mainArray.length).style
+            elem.backgroundColor = "#010101"
+        }
+        if (document.getElementById(i) != null && document.getElementById(j) != null) {
+            let bar1 = document.getElementById(i).style
+            let bar2 = document.getElementById(j - 1).style
+            bar1.backgroundColor = "#ed1c24"
+            bar2.backgroundColor = "#ed1c24"
+            await sleep(animationSpeed)
+            bar1.backgroundColor = "#415a77"
+            bar2.backgroundColor = "#415a77"            
+            setMainArray([...mainArray, sortedArray])
+        }
     }
 
     const updateBarColour = async (sortedArray, i, j) => {
@@ -54,16 +60,20 @@ function SortingVisualizer() {
     // when sorting is done
     const updateSortedBarColour = async () => {
         for (let i = 0; i < mainArray.length; i++) {
-            let bar = document.getElementById(i).style
-            bar.backgroundColor = "#007a6c"
-            await sleep(animationSpeed)
+            if (document.getElementById(i) != null) {
+                let bar = document.getElementById(i).style
+                bar.backgroundColor = "#007a6c"
+            }
+        await sleep(animationSpeed)
         }
     }
 
     const resetBarColour = () => {
         for (let i = 0; i < mainArray.length; i++) {
-            let bar = document.getElementById(i).style
-            bar.backgroundColor = "#415a77"
+            if (document.getElementById(i) != null) {
+                let bar = document.getElementById(i).style
+                bar.backgroundColor = "#415a77"
+            }
         }
     }
     
@@ -260,9 +270,9 @@ function SortingVisualizer() {
                 <button onClick={() => {resetArray()}}> Generate New Array</button>
                 <div className="algo-btn-container">
                     <button onClick={() => {mergeSort()}}>Merge Sort</button>
+                    <button onClick={() => {heapSort()}}>Heap Sort</button>
                     <button onClick={() => {insSort()}}>Insertion Sort</button>
                     <button onClick={() => {selSort()}}>Selection Sort</button>
-                    <button onClick={() => {heapSort()}}>Heap Sort</button>
                 </div>
             </div>
             <div className="array-container">
