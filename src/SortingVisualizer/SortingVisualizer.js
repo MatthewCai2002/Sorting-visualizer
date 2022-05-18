@@ -144,7 +144,7 @@ function SortingVisualizer() {
 
     // ********** selection sort algorithm **********
     const selSort = async () => {
-        await sSort(mainArray)        
+        await sSort(mainArray)    
         updateSortedBarColour()        
     }
 
@@ -170,8 +170,54 @@ function SortingVisualizer() {
     }
 
     // ********** heap sort algorithm **********
-    const heapSort = () => {
+    const heapSort = async () => {
+        await hSort(mainArray)
+        updateSortedBarColour()        
+    }
 
+    const hSort = async (array) => {
+        await buildHeap(array)
+        await removeMin(array)
+    }
+
+    const removeMin = async (array) => {
+        for (var i = array.length - 1; i > 0; i--) {
+            var temp = array[0];
+            array[0] = array[i];
+            array[i] = temp;
+            heapifyDown(array, 0, i);
+            await updateBarColour(array,0,i)
+        }
+    }
+
+    const buildHeap = async (array) => {
+        let startIdx = Math.floor(array.length / 2 - 1)
+        for (let i = startIdx; i >= 0; i--) {
+            await heapifyDown(array, i, array.length)
+        }
+    }
+
+    const heapifyDown = async (array, i, length) => {
+        let max = i
+        let leftChild = 2 * i + 1
+        let rightChild = 2 * i + 2
+
+        if (leftChild < length && array[leftChild] > array[max]) {
+            max = leftChild
+        }
+
+        if (rightChild < length && array[rightChild] > array[max]) {
+            max = rightChild
+
+        }
+
+        if (max !== i) {
+            let temp = array[i]
+            array[i] = array[max]
+            array[max] = temp
+            heapifyDown(array, max, length)
+        }
+        await updateBarColour(array, max - 1, i)
     }
 
     // ********** testing methods **********
@@ -211,11 +257,13 @@ function SortingVisualizer() {
     return (
         <div className="visualizer-container">
             <div className="btn-container">
-                <button onClick={() => {resetArray()}} className="gen-array-btn"> Generate New Array</button>
-                <button onClick={() => {mergeSort()}}>Merge Sort</button>
-                <button onClick={() => {insSort()}}>Insertion Sort</button>
-                <button onClick={() => {selSort()}}>Selection Sort</button>
-                <button onClick={() => {heapSort()}}>Heap Sort</button>
+                <button onClick={() => {resetArray()}}> Generate New Array</button>
+                <div className="algo-btn-container">
+                    <button onClick={() => {mergeSort()}}>Merge Sort</button>
+                    <button onClick={() => {insSort()}}>Insertion Sort</button>
+                    <button onClick={() => {selSort()}}>Selection Sort</button>
+                    <button onClick={() => {heapSort()}}>Heap Sort</button>
+                </div>
             </div>
             <div className="array-container">
                 {mainArray && mainArray.map((value, idx) => (
