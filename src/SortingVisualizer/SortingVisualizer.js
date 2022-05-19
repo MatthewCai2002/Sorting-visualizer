@@ -32,8 +32,8 @@ function SortingVisualizer() {
             bar2.backgroundColor = "#415a77"
             await sleep(animationSpeed)
             setMainArray([...array])
-
         }
+        enableButtons()
       }
     
     // sets state of component to random array
@@ -300,7 +300,7 @@ function SortingVisualizer() {
     return (
         <div className="visualizer-container">
             <div className="btn-container">
-                <button onClick={() => {shuffle(mainArray, 3, 80)}} class="button"> Generate New Array</button>
+                <button onClick={() => {shuffle(mainArray, 3, 80); disableButtons()}} class="button"> Generate New Array</button>
                 <div className="algo-btn-container">
                     <button onClick={() => {mergeSort(); disableButtons()}} class="button">Merge Sort</button>
                     <button onClick={() => {heapSort(); disableButtons()}} class="button">Heap Sort</button>
