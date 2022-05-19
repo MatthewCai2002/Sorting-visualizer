@@ -11,17 +11,17 @@ function SortingVisualizer() {
         return array
     }
 
+    // creates new random array
     const shuffle = async (array, min, max) => {
         let currentIndex = array.length,  randomIndex;
       
         // While there remain elements to shuffle.
-        while (currentIndex != 0) {
+        while (currentIndex !== 0) {
             // Pick a remaining element.
             randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
             
             // And swap it with the current element.
-
             [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
             array[currentIndex] = randomIntInInterval(min, max)
             array[randomIndex] = randomIntInInterval(min, max)
@@ -33,7 +33,10 @@ function SortingVisualizer() {
             await sleep(animationSpeed)
             setMainArray([...array])
         }
-        enableButtons()
+        let elems = document.getElementsByClassName("button");
+        for(var i = 0; i < elems.length; i++) {
+            elems[i].disabled = false;
+        }
       }
     
     // sets state of component to random array
@@ -50,8 +53,19 @@ function SortingVisualizer() {
         return new Promise((resolve) => setTimeout(resolve, milliSeconds))
     }
 
-    // update the colour of bars i and j
-    
+    // update color of bars i and j to red then back to original colour
+    const updateBarColour = async (sortedArray, i, j) => {
+        setMainArray([...sortedArray])
+        let bar1 = document.getElementById(i).style
+        let bar2 = document.getElementById(j).style
+        bar1.backgroundColor = "#ed1c24"
+        bar2.backgroundColor = "#ed1c24"
+        await sleep(animationSpeed)
+        bar1.backgroundColor = "#415a77"
+        bar2.backgroundColor = "#415a77"            
+    }
+
+    // equivalent to updateBarColour except for updating main array
     const updateColourMergeSort = async (sortedArray, i, j) => {
         if (document.getElementById(mainArray.length) != null) {
             let elem = document.getElementById(mainArray.length).style
@@ -69,19 +83,7 @@ function SortingVisualizer() {
         }
     }
 
-    const updateBarColour = async (sortedArray, i, j) => {
-        setMainArray([...sortedArray])
-        let bar1 = document.getElementById(i).style
-        let bar2 = document.getElementById(j).style
-        bar1.backgroundColor = "#ed1c24"
-        bar2.backgroundColor = "#ed1c24"
-        await sleep(animationSpeed)
-        bar1.backgroundColor = "#415a77"
-        bar2.backgroundColor = "#415a77"            
-    }
-
-    // change the colour of all bars in mainArray to be green
-    // when sorting is done
+    // change the colour of all bars in mainArray to green
     const updateSortedBarColour = async () => {
         for (let i = 0; i < mainArray.length; i++) {
             if (document.getElementById(i) != null) {
@@ -92,15 +94,14 @@ function SortingVisualizer() {
         }
     }
 
-    // ********** merge sort algorithm **********
+    // ********** merge sort **********
     const mergeSort = async () => {
         await mSort(mainArray, 0, mainArray.length - 1)
         await updateSortedBarColour()
-        enableButtons()
+        enableGenArrBtn()
     }
 
-    // mergeSort algorithm helper: splits array into
-    // 2 subarrays and merges them together
+    // merge sort algorithm
     const mSort = async (array, lower, upper) => {
         if (lower < upper) {
             const mid = Math.floor((lower + upper) / 2)
@@ -110,8 +111,7 @@ function SortingVisualizer() {
         }
     }
     
-    // mergeSort algorithm helper: merges 2 sub arrays
-    // into 1 sorted array
+    // merges 2 sub arrays into 1 array in sorted order
     const merge = async (array, lower, mid, upper) => {
         let i = lower
         let j = mid + 1
@@ -143,19 +143,21 @@ function SortingVisualizer() {
     
     
     
-    // ********** insertion sort algorithm **********
+    // ********** insertion sort **********
     const insSort = async () => {
         await iSort(mainArray)
         await updateSortedBarColour()
-        enableButtons()
+        enableGenArrBtn()
     }
 
+    // insertion sort algorithm
     const iSort = async (array) => {
         for (let i = 1; i < array.length; i++) {
             await slide(array,i)
         }
     }
     
+    // moves value at index i in array into sorted position
     const slide = async (array, i) => {
         let j = i - 1
         // swap position of ints if out of position
@@ -169,13 +171,14 @@ function SortingVisualizer() {
         }
     }
 
-    // ********** selection sort algorithm **********
+    // ********** selection sort **********
     const selSort = async () => {
         await sSort(mainArray)    
         await updateSortedBarColour()    
-        enableButtons()    
+        enableGenArrBtn()
     }
 
+    // selection sort algorithm
     const sSort = async (array) => {
         for (let i = 0; i < array.length; i++) {
             let minIdx = await findMin(array, i, array.length)
@@ -186,6 +189,7 @@ function SortingVisualizer() {
         }
     }
 
+    // finds minimum value in array[lower..upper)
     const findMin = async (array, lower, upper) => {
         let minIdx = lower;
         for (let i = lower; i < upper; i++) {
@@ -197,19 +201,21 @@ function SortingVisualizer() {
         return minIdx
     }
 
-    // ********** heap sort algorithm **********
+    // ********** heap sort **********
     const heapSort = async () => {
         await hSort(mainArray)
         await updateSortedBarColour()      
-        enableButtons()  
+        enableGenArrBtn()
     }
 
+    // heap sort algorithm
     const hSort = async (array) => {
         await buildHeap(array)
-        await removeMin(array)
+        await sortHeap(array)
     }
 
-    const removeMin = async (array) => {
+    // reorders max heap into increasing sorted order
+    const sortHeap = async (array) => {
         for (var i = array.length - 1; i > 0; i--) {
             var temp = array[0];
             array[0] = array[i];
@@ -219,6 +225,7 @@ function SortingVisualizer() {
         }
     }
 
+    // creates a heap from an unsorted array
     const buildHeap = async (array) => {
         let startIdx = Math.floor(array.length / 2 - 1)
         for (let i = startIdx; i >= 0; i--) {
@@ -226,6 +233,7 @@ function SortingVisualizer() {
         }
     }
 
+    // restores heap invariant for node i and all its children
     const heapifyDown = async (array, i, length) => {
         let max = i
         let leftChild = 2 * i + 1
@@ -249,6 +257,7 @@ function SortingVisualizer() {
         await updateBarColour(array, max - 1, i)
     }
 
+    // disables all buttons
     const disableButtons = () => {
         let elems = document.getElementsByClassName("button");
         for(var i = 0; i < elems.length; i++) {
@@ -256,11 +265,10 @@ function SortingVisualizer() {
         }
     }
 
-    const enableButtons = () => {
-        let elems = document.getElementsByClassName("button");
-        for(var i = 0; i < elems.length; i++) {
-            elems[i].disabled = false;
-        }
+    // only enables generate array button
+    const enableGenArrBtn = () => {
+        let genArrBtn = document.getElementById("gen-arr-btn")
+        genArrBtn.disabled = false;
     }
 
     // ********** testing methods **********
@@ -300,7 +308,7 @@ function SortingVisualizer() {
     return (
         <div className="visualizer-container">
             <div className="btn-container">
-                <button onClick={() => {shuffle(mainArray, 3, 80); disableButtons()}} class="button"> Generate New Array</button>
+                <button onClick={() => {shuffle(mainArray, 3, 80); disableButtons()}} class="button" id="gen-arr-btn"> Generate New Array</button>
                 <div className="algo-btn-container">
                     <button onClick={() => {mergeSort(); disableButtons()}} class="button">Merge Sort</button>
                     <button onClick={() => {heapSort(); disableButtons()}} class="button">Heap Sort</button>
