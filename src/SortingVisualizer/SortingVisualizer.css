@@ -34,9 +34,19 @@
     /* Layout */
     flex-grow: 1;
     min-width: 2px;
-
     /* Colour */
     background-color: 	#415a77;
+}
+
+/* buttons */
+button:disabled {
+    transition: all 0.1s ease-in;
+    opacity: 0.45;
+}
+
+button:enabled {
+    transition: all 0.1s ease-in;
+    opacity: 1;
 }
 
 button:hover {

@@ -7,14 +7,38 @@ function SortingVisualizer() {
 
     // generate an array of random integer values
     const randomArray = (length, min, max) => {
-        let array = ([...new Array(length)].map(() => Math.floor(Math.random()*(max-min+1)+min)))
+        let array = ([...new Array(length)].map(() => randomIntInInterval(min,max)))
         return array
     }
+
+    const shuffle = async (array, min, max) => {
+        let currentIndex = array.length,  randomIndex;
+      
+        // While there remain elements to shuffle.
+        while (currentIndex != 0) {
+            // Pick a remaining element.
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            
+            // And swap it with the current element.
+
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            array[currentIndex] = randomIntInInterval(min, max)
+            array[randomIndex] = randomIntInInterval(min, max)
+
+            let bar1 = document.getElementById(currentIndex).style
+            let bar2 = document.getElementById(randomIndex).style
+            bar1.backgroundColor = "#415a77"
+            bar2.backgroundColor = "#415a77"
+            await sleep(animationSpeed)
+            setMainArray([...array])
+
+        }
+      }
     
     // sets state of component to random array
     const resetArray = () => {
         let array = randomArray(100,3,80)
-        resetBarColour()
         setMainArray(array)
     }
     
@@ -68,19 +92,11 @@ function SortingVisualizer() {
         }
     }
 
-    const resetBarColour = () => {
-        for (let i = 0; i < mainArray.length; i++) {
-            if (document.getElementById(i) != null) {
-                let bar = document.getElementById(i).style
-                bar.backgroundColor = "#415a77"
-            }
-        }
-    }
-    
     // ********** merge sort algorithm **********
     const mergeSort = async () => {
         await mSort(mainArray, 0, mainArray.length - 1)
-        updateSortedBarColour()
+        await updateSortedBarColour()
+        enableButtons()
     }
 
     // mergeSort algorithm helper: splits array into
@@ -130,7 +146,8 @@ function SortingVisualizer() {
     // ********** insertion sort algorithm **********
     const insSort = async () => {
         await iSort(mainArray)
-        updateSortedBarColour()
+        await updateSortedBarColour()
+        enableButtons()
     }
 
     const iSort = async (array) => {
@@ -155,7 +172,8 @@ function SortingVisualizer() {
     // ********** selection sort algorithm **********
     const selSort = async () => {
         await sSort(mainArray)    
-        updateSortedBarColour()        
+        await updateSortedBarColour()    
+        enableButtons()    
     }
 
     const sSort = async (array) => {
@@ -182,7 +200,8 @@ function SortingVisualizer() {
     // ********** heap sort algorithm **********
     const heapSort = async () => {
         await hSort(mainArray)
-        updateSortedBarColour()        
+        await updateSortedBarColour()      
+        enableButtons()  
     }
 
     const hSort = async (array) => {
@@ -230,6 +249,20 @@ function SortingVisualizer() {
         await updateBarColour(array, max - 1, i)
     }
 
+    const disableButtons = () => {
+        let elems = document.getElementsByClassName("button");
+        for(var i = 0; i < elems.length; i++) {
+            elems[i].disabled = true;
+        }
+    }
+
+    const enableButtons = () => {
+        let elems = document.getElementsByClassName("button");
+        for(var i = 0; i < elems.length; i++) {
+            elems[i].disabled = false;
+        }
+    }
+
     // ********** testing methods **********
     const isArrayEqual = (actual, expected) => {
         if (actual.length !== expected.length) {
@@ -267,12 +300,12 @@ function SortingVisualizer() {
     return (
         <div className="visualizer-container">
             <div className="btn-container">
-                <button onClick={() => {resetArray()}}> Generate New Array</button>
+                <button onClick={() => {shuffle(mainArray, 3, 80)}} class="button"> Generate New Array</button>
                 <div className="algo-btn-container">
-                    <button onClick={() => {mergeSort()}}>Merge Sort</button>
-                    <button onClick={() => {heapSort()}}>Heap Sort</button>
-                    <button onClick={() => {insSort()}}>Insertion Sort</button>
-                    <button onClick={() => {selSort()}}>Selection Sort</button>
+                    <button onClick={() => {mergeSort(); disableButtons()}} class="button">Merge Sort</button>
+                    <button onClick={() => {heapSort(); disableButtons()}} class="button">Heap Sort</button>
+                    <button onClick={() => {insSort(); disableButtons()}} class="button">Insertion Sort</button>
+                    <button onClick={() => {selSort(); disableButtons()}} class="button">Selection Sort</button>
                 </div>
             </div>
             <div className="array-container">
